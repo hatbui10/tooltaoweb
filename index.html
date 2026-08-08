@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trình Tạo Cấu Trúc Div Inline Style</title>
+    <title>Trình Tạo Cấu Trúc CSS, Logic & Form HTML</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -58,6 +58,23 @@
             background-color: #ffa726 !important; 
         }
 
+        .logic-btn {
+            background-color: #03dac6 !important;
+            color: #000 !important;
+        }
+        .logic-btn:hover {
+            background-color: #018786 !important;
+        }
+
+        .form-btn {
+            background-color: #cf6679 !important;
+            color: #000 !important;
+        }
+        .form-btn:hover {
+            background-color: #b00020 !important;
+            color: #fff !important;
+        }
+
         #input-container { 
             background: #2c2c2c; 
             padding: 20px; 
@@ -68,7 +85,7 @@
         .form-title {
             color: #bb86fc; 
             font-weight: bold; 
-            margin-bottom: 15px;
+            margin-bottom: 15px; 
             font-size: 16px;
             border-bottom: 1px solid #444;
             padding-bottom: 8px;
@@ -133,7 +150,7 @@
         }
         textarea {
             width: 100%; 
-            height: 140px; 
+            height: 180px; 
             padding: 12px; 
             box-sizing: border-box;
             background: #121212; 
@@ -149,22 +166,26 @@
 <body>
 
 <div class="container">
-    <h2>Trình Tạo Cấu Trúc Div (Inline Style)</h2>
+    <h2>Trình Tạo Cấu Trúc CSS, Logic & Form HTML</h2>
     
-    <div class="section-title">Chọn đối tượng cần chỉnh sửa hoặc tạo khối:</div>
+    <div class="section-title">Chọn đối tượng hoặc cấu trúc cần tạo:</div>
     <div class="button-group" id="main-button-group">
-        <button onclick="loadForm('div')">div</button>
-        <button onclick="loadForm('body')">body</button>
-        <button onclick="loadForm('button')">button</button>
-        <button onclick="loadForm('input')">input</button>
+        <button onclick="loadForm('div')">div (CSS)</button>
+        <button onclick="loadForm('body')">body (CSS)</button>
+        <button onclick="loadForm('button')">button (CSS)</button>
+        <button onclick="loadForm('input')">input (CSS)</button>
     </div>
 
     <div class="button-group">
         <button class="add-generator-btn" onclick="loadAdvancedDivBuilder()">+ Tạo khối Div/HTML (Inline Style)</button>
+        <button class="logic-btn" onclick="loadLogicBuilder('function')">function</button>
+        <button class="logic-btn" onclick="loadLogicBuilder('if')">if</button>
+        <button class="logic-btn" onclick="loadLogicBuilder('ifelse')">if else</button>
+        <button class="form-btn" onclick="loadFormBuilder()">form html cơ bản</button>
     </div>
 
     <div id="input-container">
-        <p style="text-align: center; color: #777; margin: 0;">Vui lòng chọn một thành phần ở trên để bắt đầu cấu hình.</p>
+        <p style="text-align: center; color: #777; margin: 0;">Vui lòng chọn một tùy chọn ở trên để bắt đầu cấu hình.</p>
     </div>
 
     <h3>Kết quả:</h3>
@@ -187,7 +208,7 @@
     };
 
     let currentSelector = '';
-    let isAdvancedBuilder = false;
+    let currentMode = 'css'; 
 
     function getPlaceholder(field) {
         if (field.includes('background') || field.includes('color')) return 'VD: #1e1e13, red...';
@@ -197,7 +218,7 @@
     }
 
     function loadForm(selector) {
-        isAdvancedBuilder = false;
+        currentMode = 'css';
         currentSelector = selector;
         const container = document.getElementById('input-container');
         container.innerHTML = `<div class="form-title">Cấu hình CSS cho: &lt;${selector}&gt;</div>`;
@@ -219,13 +240,12 @@
         
         const actionDiv = document.createElement('div');
         actionDiv.className = 'action-container';
-        actionDiv.innerHTML = `<button class="action-btn" onclick="generateResult()">Hiện kết quả CSS</button>`;
+        actionDiv.innerHTML = `<button class="action-btn" onclick="generateResult()">Tạo kết quả</button>`;
         container.appendChild(actionDiv);
     }
 
-    // Giao diện riêng cho nút tạo khối div tích hợp inline style
     function loadAdvancedDivBuilder() {
-        isAdvancedBuilder = true;
+        currentMode = 'div-inline';
         const container = document.getElementById('input-container');
         container.innerHTML = `
             <div class="form-title">Tạo cấu trúc Div với Style bên trong</div>
@@ -256,13 +276,131 @@
                 </div>
             </div>
             <div class="action-container">
-                <button class="action-btn" onclick="generateResult()">Tạo cấu trúc HTML hoàn chỉnh</button>
+                <button class="action-btn" onclick="generateResult()">Tạo kết quả</button>
+            </div>
+        `;
+    }
+
+    function loadLogicBuilder(type) {
+        currentMode = type;
+        const container = document.getElementById('input-container');
+        
+        if (type === 'function') {
+            container.innerHTML = `
+                <div class="form-title">Tạo cấu trúc Function (Hàm JavaScript)</div>
+                <div class="grid-inputs">
+                    <div class="input-group">
+                        <label>Tên hàm:</label>
+                        <input type="text" id="func_name" placeholder="VD: switchUserRole">
+                    </div>
+                    <div class="input-group">
+                        <label>Tham số truyền vào (nếu có):</label>
+                        <input type="text" id="func_params" placeholder="VD: role, status">
+                    </div>
+                    <div class="input-group full-width">
+                        <label>Khối lệnh bên trong hàm:</label>
+                        <textarea id="func_body" rows="4" placeholder="VD: console.log(role); return true;"></textarea>
+                    </div>
+                </div>
+                <div class="action-container">
+                    <button class="action-btn" onclick="generateResult()">Tạo kết quả</button>
+                </div>
+            `;
+        } else if (type === 'if') {
+            container.innerHTML = `
+                <div class="form-title">Tạo cấu trúc Câu lệnh điều kiện IF</div>
+                <div class="grid-inputs">
+                    <div class="input-group full-width">
+                        <label>Điều kiện (trong ngoặc):</label>
+                        <input type="text" id="if_condition" placeholder="VD: role === 'teacher'">
+                    </div>
+                    <div class="input-group full-width">
+                        <label>Khối lệnh khi thỏa mãn điều kiện:</label>
+                        <textarea id="if_body" rows="4" placeholder="VD: alert('Chào giáo viên!');"></textarea>
+                    </div>
+                </div>
+                <div class="action-container">
+                    <button class="action-btn" onclick="generateResult()">Tạo kết quả</button>
+                </div>
+            `;
+        } else if (type === 'ifelse') {
+            container.innerHTML = `
+                <div class="form-title">Tạo cấu trúc Câu lệnh IF - ELSE</div>
+                <div class="grid-inputs">
+                    <div class="input-group full-width">
+                        <label>Điều kiện IF (trong ngoặc):</label>
+                        <input type="text" id="ifelse_condition" placeholder="VD: score >= 5">
+                    </div>
+                    <div class="input-group full-width">
+                        <label>Khối lệnh IF (khi đúng):</label>
+                        <textarea id="ifelse_body" rows="3" placeholder="VD: console.log('Đạt');"></textarea>
+                    </div>
+                    <div class="input-group full-width">
+                        <label>Khối lệnh ELSE (khi sai):</label>
+                        <textarea id="ifelse_else_body" rows="3" placeholder="VD: console.log('Trượt');"></textarea>
+                    </div>
+                </div>
+                <div class="action-container">
+                    <button class="action-btn" onclick="generateResult()">Tạo kết quả</button>
+                </div>
+            `;
+        }
+    }
+
+    function loadFormBuilder() {
+        currentMode = 'html-form';
+        const container = document.getElementById('input-container');
+        container.innerHTML = `
+            <div class="form-title">Tạo Form HTML Cơ Bản</div>
+            <div class="grid-inputs">
+                <div class="input-group">
+                    <label>Class hoặc ID của Form (nếu có):</label>
+                    <input type="text" id="form_class" placeholder="VD: class='login-form'">
+                </div>
+                <div class="input-group">
+                    <label>Phương thức (method):</label>
+                    <input type="text" id="form_method" placeholder="VD: POST hoặc GET">
+                </div>
+                <div class="input-group full-width">
+                    <label>Đường dẫn xử lý (action):</label>
+                    <input type="text" id="form_action" placeholder="VD: /submit-url hoặc #">
+                </div>
+                <div class="input-group full-width">
+                    <label>Các trường bên trong form (mặc định sẵn đoạn code mẫu bạn yêu cầu):</label>
+                    <textarea id="form_fields" rows="6"><!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trình Tạo Cấu Trúc CSS, Logic & Form HTML</title></textarea>
+                </div>
+            </div>
+            <div class="action-container">
+                <button class="action-btn" onclick="generateResult()">Tạo kết quả</button>
             </div>
         `;
     }
 
     function generateResult() {
-        if (isAdvancedBuilder) {
+        let wrapHtmlTemplate = (contentBody) => {
+            return `<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Đã Tạo</title>
+</head>
+<body>
+
+${contentBody}
+
+</body>
+</html>`;
+        };
+
+        let innerContent = "";
+
+        if (currentMode === 'div-inline') {
             let rawElement = document.getElementById('adv_element').value.trim();
             if (!rawElement) {
                 alert("Vui lòng nhập tên phần tử!");
@@ -277,7 +415,6 @@
 
             let formatVal = (v) => (/^\d+(\.\d+)?$/.test(v) ? v + "px" : v);
 
-            // Gom các thuộc tính style lại
             let styles = [];
             if (bg) styles.push(`background: ${bg}`);
             if (size) {
@@ -288,34 +425,86 @@
             if (padding) styles.push(`padding: ${formatVal(padding)}`);
 
             let styleAttr = styles.length > 0 ? ` style="${styles.join('; ')};"` : "";
-
             let htmlResult = "";
+
             if (rawElement.startsWith('<')) {
-                // Nếu người dùng nhập sẵn thẻ dạng <div class="bnhgv">
-                // Chèn thuộc tính style vào ngay trước dấu > đóng của thẻ mở đầu tiên
                 htmlResult = rawElement.replace(/>/, `${styleAttr}>`);
                 if (content) {
-                    // Thêm nội dung và đóng thẻ nếu chưa có
                     let matchTag = rawElement.match(/<([a-zA-Z0-9]+)/);
                     let tagName = matchTag ? matchTag[1] : 'div';
                     htmlResult += `\n    ${content}\n</${tagName}>`;
                 }
             } else if (rawElement.startsWith('.') || rawElement.startsWith('#')) {
-                // Nếu nhập dạng .bnhgv hoặc #id
                 let attrType = rawElement.startsWith('.') ? 'class' : 'id';
                 let attrVal = rawElement.substring(1);
                 htmlResult = `<div ${attrType}="${attrVal}"${styleAttr}>${content ? '\n    ' + content + '\n' : ''}</div>`;
             } else {
-                // Nếu nhập tên thẻ thuần túy như div, span
                 htmlResult = `<${rawElement}${styleAttr}>${content ? '\n    ' + content + '\n' : ''}</${rawElement}>`;
             }
 
-            document.getElementById('output-result').value = htmlResult;
+            innerContent = htmlResult;
+
+        } else if (currentMode === 'function') {
+            let name = document.getElementById('func_name').value.trim() || 'myFunction';
+            let params = document.getElementById('func_params').value.trim();
+            let body = document.getElementById('func_body').value.trim();
+
+            let jsCode = `function ${name}(${params}) {\n`;
+            if (body) {
+                jsCode += body.split('\n').map(line => `    ${line}`).join('\n') + '\n';
+            }
+            jsCode += `}`;
+            innerContent = `<script>\n${jsCode}\n<\/script>`;
+
+        } else if (currentMode === 'if') {
+            let condition = document.getElementById('if_condition').value.trim() || 'true';
+            let body = document.getElementById('if_body').value.trim();
+
+            let jsCode = `if (${condition}) {\n`;
+            if (body) {
+                jsCode += body.split('\n').map(line => `    ${line}`).join('\n') + '\n';
+            }
+            jsCode += `}`;
+            innerContent = `<script>\n${jsCode}\n<\/script>`;
+
+        } else if (currentMode === 'ifelse') {
+            let condition = document.getElementById('ifelse_condition').value.trim() || 'true';
+            let body = document.getElementById('ifelse_body').value.trim();
+            let elseBody = document.getElementById('ifelse_else_body').value.trim();
+
+            let jsCode = `if (${condition}) {\n`;
+            if (body) {
+                jsCode += body.split('\n').map(line => `    ${line}`).join('\n') + '\n';
+            }
+            jsCode += `} else {\n`;
+            if (elseBody) {
+                jsCode += elseBody.split('\n').map(line => `    ${line}`).join('\n') + '\n';
+            }
+            jsCode += `}`;
+            innerContent = `<script>\n${jsCode}\n<\/script>`;
+
+        } else if (currentMode === 'html-form') {
+            let formAttr = document.getElementById('form_class').value.trim();
+            let method = document.getElementById('form_method').value.trim();
+            let action = document.getElementById('form_action').value.trim();
+            let innerFields = document.getElementById('form_fields').value; // Giữ nguyên khoảng trắng, xuống dòng
+
+            let attrs = [];
+            if (formAttr) attrs.push(formAttr);
+            if (method) attrs.push(`method="${method}"`);
+            if (action) attrs.push(`action="${action}"`);
+
+            let attrString = attrs.length > 0 ? " " + attrs.join(" ") : "";
+            let formRes = `<form${attrString}>\n`;
+            if (innerFields) {
+                formRes += innerFields.split('\n').map(line => line ? `    ${line}` : '').join('\n') + '\n';
+            }
+            formRes += `</form>`;
+            innerContent = formRes;
 
         } else {
-            // Xử lý sinh CSS cho các nút thông thường
             const fields = formConfigs[currentSelector] || defaultProperties;
-            let res = `${currentSelector} {\n`;
+            let cssRes = `${currentSelector} {\n`;
             
             fields.forEach((field, i) => {
                 const inputElem = document.getElementById('val_' + i);
@@ -326,14 +515,16 @@
                         if (/^\d+(\.\d+)?$/.test(val) && sizeProps.some(p => field.includes(p))) {
                             val += 'px';
                         }
-                        res += `  ${field}: ${val};\n`;
+                        cssRes += `  ${field}: ${val};\n`;
                     }
                 }
             });
             
-            res += "}";
-            document.getElementById('output-result').value = res;
+            cssRes += "}";
+            innerContent = `<style>\n${cssRes}\n</style>`;
         }
+
+        document.getElementById('output-result').value = wrapHtmlTemplate(innerContent);
     }
 </script>
 </body>

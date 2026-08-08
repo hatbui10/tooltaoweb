@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trình Tạo Cấu Trúc Div Inline Style</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1e1e1e;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+        h2 { 
+            color: #bb86fc; 
+            margin-top: 0; 
+        }
+        .section-title { 
+            font-weight: bold; 
+            color: #cfcfcf; 
+            margin-bottom: 10px; 
+        }
+        
+        .button-group { 
+            display: flex; 
+            gap: 10px; 
+            margin-bottom: 15px; 
+            flex-wrap: wrap; 
+        }
+        .button-group button {
+            padding: 10px 18px; 
+            cursor: pointer; 
+            border: none;
+            background-color: #333; 
+            color: #fff; 
+            border-radius: 6px;
+            transition: background 0.3s;
+            font-weight: bold;
+        }
+        .button-group button:hover { 
+            background-color: #444; 
+        }
+
+        .add-generator-btn { 
+            background-color: #ffb74d !important; 
+            color: #000 !important; 
+        }
+        .add-generator-btn:hover { 
+            background-color: #ffa726 !important; 
+        }
+
+        #input-container { 
+            background: #2c2c2c; 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin-bottom: 20px; 
+            border: 1px solid #444;
+        }
+        .form-title {
+            color: #bb86fc; 
+            font-weight: bold; 
+            margin-bottom: 15px;
+            font-size: 16px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 8px;
+        }
+        .grid-inputs { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 15px; 
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .input-group.full-width {
+            grid-column: span 2;
+        }
+        .input-group label { 
+            margin-bottom: 5px; 
+            font-size: 13px; 
+            color: #bbb; 
+            font-weight: 600;
+        }
+        .input-group input, .input-group textarea {
+            width: 100%; 
+            padding: 10px; 
+            box-sizing: border-box;
+            background: #121212; 
+            border: 1px solid #444; 
+            border-radius: 6px; 
+            color: #fff;
+            font-size: 14px;
+        }
+        .input-group input:focus, .input-group textarea:focus { 
+            border-color: #bb86fc; 
+            outline: none; 
+            box-shadow: 0 0 0 2px rgba(187, 134, 252, 0.2);
+        }
+        
+        .action-container {
+            margin-top: 20px;
+            text-align: right;
+        }
+        .action-btn {
+            padding: 10px 20px; 
+            background-color: #bb86fc;
+            color: #000; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .action-btn:hover {
+            background-color: #9965f4;
+        }
+        
+        h3 {
+            font-size: 15px;
+            color: #cfcfcf;
+            margin-bottom: 8px;
+        }
+        textarea {
+            width: 100%; 
+            height: 140px; 
+            padding: 12px; 
+            box-sizing: border-box;
+            background: #121212; 
+            border: 1px solid #444; 
+            border-radius: 6px;
+            color: #03dac6; 
+            font-family: Consolas, monospace; 
+            font-size: 14px;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Trình Tạo Cấu Trúc Div (Inline Style)</h2>
+    
+    <div class="section-title">Chọn đối tượng cần chỉnh sửa hoặc tạo khối:</div>
+    <div class="button-group" id="main-button-group">
+        <button onclick="loadForm('div')">div</button>
+        <button onclick="loadForm('body')">body</button>
+        <button onclick="loadForm('button')">button</button>
+        <button onclick="loadForm('input')">input</button>
+    </div>
+
+    <div class="button-group">
+        <button class="add-generator-btn" onclick="loadAdvancedDivBuilder()">+ Tạo khối Div/HTML (Inline Style)</button>
+    </div>
+
+    <div id="input-container">
+        <p style="text-align: center; color: #777; margin: 0;">Vui lòng chọn một thành phần ở trên để bắt đầu cấu hình.</p>
+    </div>
+
+    <h3>Kết quả:</h3>
+    <textarea id="output-result" placeholder="Kết quả sẽ hiển thị ở đây sau khi bạn hoàn tất..."></textarea>
+</div>
+
+<script>
+    const defaultProperties = [
+        'background', 'color', 'width', 'height', 'border', 'border-radius', 
+        'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+        'padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
+        'font-size', 'font-weight', 'display', 'position', 'outline'
+    ];
+
+    const formConfigs = {
+        'div': defaultProperties,
+        'body': defaultProperties,
+        'button': defaultProperties,
+        'input': defaultProperties
+    };
+
+    let currentSelector = '';
+    let isAdvancedBuilder = false;
+
+    function getPlaceholder(field) {
+        if (field.includes('background') || field.includes('color')) return 'VD: #1e1e13, red...';
+        if (['width', 'height', 'margin', 'padding', 'font-size', 'border-radius'].some(k => field.includes(k))) return 'VD: 30, 100 (tự thêm px)';
+        if (field.includes('border')) return 'VD: 1px solid #444';
+        return 'Nhập giá trị...';
+    }
+
+    function loadForm(selector) {
+        isAdvancedBuilder = false;
+        currentSelector = selector;
+        const container = document.getElementById('input-container');
+        container.innerHTML = `<div class="form-title">Cấu hình CSS cho: &lt;${selector}&gt;</div>`;
+        
+        const grid = document.createElement('div');
+        grid.className = 'grid-inputs';
+        
+        const fields = formConfigs[selector] || defaultProperties;
+        fields.forEach((field, i) => {
+            grid.innerHTML += `
+                <div class="input-group">
+                    <label>${field}:</label>
+                    <input type="text" id="val_${i}" placeholder="${getPlaceholder(field)}">
+                </div>
+            `;
+        });
+        
+        container.appendChild(grid);
+        
+        const actionDiv = document.createElement('div');
+        actionDiv.className = 'action-container';
+        actionDiv.innerHTML = `<button class="action-btn" onclick="generateResult()">Hiện kết quả CSS</button>`;
+        container.appendChild(actionDiv);
+    }
+
+    // Giao diện riêng cho nút tạo khối div tích hợp inline style
+    function loadAdvancedDivBuilder() {
+        isAdvancedBuilder = true;
+        const container = document.getElementById('input-container');
+        container.innerHTML = `
+            <div class="form-title">Tạo cấu trúc Div với Style bên trong</div>
+            <div class="grid-inputs">
+                <div class="input-group full-width">
+                    <label>Tên thẻ / Class / ID (VD: div class="bnhgv"):</label>
+                    <input type="text" id="adv_element" placeholder="VD: div class='bnhgv' hoặc .bnhgv">
+                </div>
+                <div class="input-group">
+                    <label>background:</label>
+                    <input type="text" id="adv_bg" placeholder="VD: #1e1e13">
+                </div>
+                <div class="input-group">
+                    <label>width / height:</label>
+                    <input type="text" id="adv_size" placeholder="VD: 100px hoặc 100%">
+                </div>
+                <div class="input-group">
+                    <label>margin:</label>
+                    <input type="text" id="adv_margin" placeholder="VD: 10px 20px">
+                </div>
+                <div class="input-group">
+                    <label>padding:</label>
+                    <input type="text" id="adv_padding" placeholder="VD: 15px">
+                </div>
+                <div class="input-group full-width">
+                    <label>Nội dung bên trong (HTML con nếu có):</label>
+                    <textarea id="adv_content" rows="3" placeholder="VD: Nội dung hoặc để trống..."></textarea>
+                </div>
+            </div>
+            <div class="action-container">
+                <button class="action-btn" onclick="generateResult()">Tạo cấu trúc HTML hoàn chỉnh</button>
+            </div>
+        `;
+    }
+
+    function generateResult() {
+        if (isAdvancedBuilder) {
+            let rawElement = document.getElementById('adv_element').value.trim();
+            if (!rawElement) {
+                alert("Vui lòng nhập tên phần tử!");
+                return;
+            }
+
+            const bg = document.getElementById('adv_bg').value.trim();
+            const size = document.getElementById('adv_size').value.trim();
+            const margin = document.getElementById('adv_margin').value.trim();
+            const padding = document.getElementById('adv_padding').value.trim();
+            const content = document.getElementById('adv_content').value.trim();
+
+            let formatVal = (v) => (/^\d+(\.\d+)?$/.test(v) ? v + "px" : v);
+
+            // Gom các thuộc tính style lại
+            let styles = [];
+            if (bg) styles.push(`background: ${bg}`);
+            if (size) {
+                styles.push(`width: ${formatVal(size)}`);
+                styles.push(`height: ${formatVal(size)}`);
+            }
+            if (margin) styles.push(`margin: ${formatVal(margin)}`);
+            if (padding) styles.push(`padding: ${formatVal(padding)}`);
+
+            let styleAttr = styles.length > 0 ? ` style="${styles.join('; ')};"` : "";
+
+            let htmlResult = "";
+            if (rawElement.startsWith('<')) {
+                // Nếu người dùng nhập sẵn thẻ dạng <div class="bnhgv">
+                // Chèn thuộc tính style vào ngay trước dấu > đóng của thẻ mở đầu tiên
+                htmlResult = rawElement.replace(/>/, `${styleAttr}>`);
+                if (content) {
+                    // Thêm nội dung và đóng thẻ nếu chưa có
+                    let matchTag = rawElement.match(/<([a-zA-Z0-9]+)/);
+                    let tagName = matchTag ? matchTag[1] : 'div';
+                    htmlResult += `\n    ${content}\n</${tagName}>`;
+                }
+            } else if (rawElement.startsWith('.') || rawElement.startsWith('#')) {
+                // Nếu nhập dạng .bnhgv hoặc #id
+                let attrType = rawElement.startsWith('.') ? 'class' : 'id';
+                let attrVal = rawElement.substring(1);
+                htmlResult = `<div ${attrType}="${attrVal}"${styleAttr}>${content ? '\n    ' + content + '\n' : ''}</div>`;
+            } else {
+                // Nếu nhập tên thẻ thuần túy như div, span
+                htmlResult = `<${rawElement}${styleAttr}>${content ? '\n    ' + content + '\n' : ''}</${rawElement}>`;
+            }
+
+            document.getElementById('output-result').value = htmlResult;
+
+        } else {
+            // Xử lý sinh CSS cho các nút thông thường
+            const fields = formConfigs[currentSelector] || defaultProperties;
+            let res = `${currentSelector} {\n`;
+            
+            fields.forEach((field, i) => {
+                const inputElem = document.getElementById('val_' + i);
+                if (inputElem) {
+                    let val = inputElem.value.trim();
+                    if (val !== "") {
+                        const sizeProps = ['width', 'height', 'margin', 'padding', 'font-size', 'border-radius'];
+                        if (/^\d+(\.\d+)?$/.test(val) && sizeProps.some(p => field.includes(p))) {
+                            val += 'px';
+                        }
+                        res += `  ${field}: ${val};\n`;
+                    }
+                }
+            });
+            
+            res += "}";
+            document.getElementById('output-result').value = res;
+        }
+    }
+</script>
+</body>
+</html>
